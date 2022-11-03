@@ -3,10 +3,11 @@
 A C# class to replicate the PHP "<a href="https://github.com/jenssegers/optimus">Optimus</a>" library.
 
 Based on <a href="https://www.oreilly.com/library/view/art-of-computer/9780321635792/">Donald J Knuth's hash algorithm</a>, this will obfuscate an integer ID into another integer value. 
+
 This can be useful for those who want obfuscated IDs, such as DB primary keys, and want obfuscation but do not want to alter their application to handle string equivalents. 
 This class can be dropped in to replace original ints with encoded ints, simply encode and decode where required.
 
-It is similar to HashIds, but will generate integers instead of random strings. It is also super fast.
+It is similar to <a href="https://github.com/ullmark/hashids.net">HashIds</a>, but will generate integers instead of random strings. It is also super fast.
 
 Example of usage:
 
@@ -34,21 +35,20 @@ Save those 3 values as they form thge "key" to encoding and decoding values with
 
 ## Encoding and decoding
 
-To encode id's, use the `encode` method:
+To encode id's, create an instance of the class (totally thread safe, so a singleton is fine)
 
 ```c#
 Optimus k = new Optimus(prime, inv, rand);
-var v = 111111111;
 ```
 
-Encode a value, v.
+Encode a value
 ```c#
-var code = k.Encode(v);
+var code = k.Encode(123);
 ```
 
-To decode the resulting `30938859` back to its original value, use the `decode` method:
+To decode the resulting code back to its original value, use the `decode` method:
 
-```php
+```c#
 var decode = k.Decode(code);
 ```
 
@@ -56,17 +56,21 @@ For those who really want strings, as your original value is now an obfuscated i
 `EncodeBase64` and `DecodeBase64` methods are provided to show how to do this along with the url-friendly version for your convenience.
 
 ## Performance
-To show the relative speeds of the 3 methods (pure Knuth hash, hashed and Base64, HashIds library), benchmark code is included. the results for 1000 runs are:
+To show the relative speeds of the 3 methods (pure Knuth hash, hashed and Base64, HashIds library), benchmark code is included. the results are:
 
 ```
-|         Method |           Mean |        Error |       StdDev |
-|--------------- |---------------:|-------------:|-------------:|
-|       RunKnuth |       959.4 ns |      2.69 ns |      2.51 ns |
-| RunKnuthBase64 |    65,095.7 ns |    394.60 ns |    369.10 ns |
-|      RunHashId | 7,794,771.4 ns | 31,549.37 ns | 27,967.69 ns |
+|            Method |      Mean |     Error |    StdDev |   Gen0 |   Gen1 | Allocated |
+|------------------ |----------:|----------:|----------:|-------:|-------:|----------:|
+|          RunKnuth | 0.0041 ns | 0.0000 ns | 0.0000 ns | 0.0000 |      - |         - |
+|    RunKnuthBase64 | 0.0688 ns | 0.0004 ns | 0.0003 ns | 0.0000 |      - |         - |
+| RunKnuthBase64Url | 0.1481 ns | 0.0010 ns | 0.0010 ns | 0.0001 |      - |         - |
+|         RunHashId | 8.2426 ns | 0.0471 ns | 0.0393 ns | 0.0012 | 0.0006 |       7 B |
 ```
 
-While HashIds is fast - 8ms for 1000 encode/decode pairs, its embarrassed by the pure Knuth hashing at less than 1 microsecond. Nearly 8,000 times faster using the superpower that is maths.
+Note the Knuth hasd can be further improved by a factor of 4 by instancing the class once. It is totally thread-safe.
+
+While HashIds is fast - 8ms for 1000 encode/decode pairs, its embarrassed by the pure Knuth hashing at 4 microseconds.
+Nearly 2,000 times faster using the superpower that is maths.
 
 
 ## License

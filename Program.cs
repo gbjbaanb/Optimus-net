@@ -21,75 +21,47 @@ namespace OptimusNet
 {
 	public class Tests
 	{
-		[Benchmark]
+		[Benchmark(OperationsPerInvoke = 1000)]
 		public long RunKnuth()
 		{
 			Optimus k = new Optimus(1580030173, 59260789, 1163945558);
-			long forceusage = 0;
+			var code = k.Encode(123);
+			var decode = k.Decode(code);
 
-			for (int i = 0; i < 1000; i++)
-			{
-				var code = k.Encode(i);
-				var decode = k.Decode(code);
-
-				forceusage += decode;
-			}
-
-			return forceusage;
+			return decode;
 		}
 
 
-		[Benchmark]
+		[Benchmark(OperationsPerInvoke = 1000)]
 		public long RunKnuthBase64()
 		{
-			long forceusage = 0;
+			Optimus k = new Optimus(1580030173, 59260789, 1163945558);
+			var code = k.EncodeBase64(123);
+			var decode = k.DecodeBase64(code);
 
-			for (int i = 0; i < 1000; i++)
-			{
-				Optimus k = new Optimus(1580030173, 59260789, 1163945558);
-				var code = k.EncodeBase64(i);
-				var decode = k.DecodeBase64(code);
-
-				forceusage += decode;
-			}
-
-			return forceusage;
+			return decode;
 		}
 
 
-		[Benchmark]
+		[Benchmark(OperationsPerInvoke = 1000)]
 		public long RunKnuthBase64Url()
 		{
-			long forceusage = 0;
+			Optimus k = new Optimus(1580030173, 59260789, 1163945558);
+			var code = k.EncodeBase64Url(123);
+			var decode = k.DecodeBase64Url(code);
 
-			for (int i = 0; i < 1000; i++)
-			{
-				Optimus k = new Optimus(1580030173, 59260789, 1163945558);
-				var code = k.EncodeBase64Url(i);
-				var decode = k.DecodeBase64Url(code);
-
-				forceusage += decode;
-			}
-
-			return forceusage;
+			return decode;
 		}
 
 
-		[Benchmark]
+		[Benchmark(OperationsPerInvoke = 1000)]
 		public long RunHashId()
 		{
-			long forceusage = 0;
+			Hashids h = new Hashids("a salt");
+			var code = h.Encode(123);
+			var decode = h.DecodeSingle(code);
 
-			for (int i = 0; i < 1000; i++)
-			{
-				Hashids h = new Hashids("a salt");
-				var code = h.Encode(i);
-				var decode = h.DecodeSingle(code);
-
-				forceusage += decode;
-			}
-
-			return forceusage;
+			return decode;
 		}
 
 
